@@ -381,6 +381,7 @@ slow_upgrade(Node, NewVersion, Nodes) ->
 
 %% @doc Have `Node' send a join request to `PNode'
 join(Node, PNode) ->
+    timer:sleep(5000),
     R = rpc:call(Node, riak_core, join, [PNode]),
     lager:info("[join] ~p to (~p): ~p", [Node, PNode, R]),
     ?assertEqual(ok, R),
@@ -388,18 +389,19 @@ join(Node, PNode) ->
 
 %% @doc Have `Node' send a join request to `PNode'
 staged_join(Node, PNode) ->
+    timer:sleep(5000),
     R = rpc:call(Node, riak_core, staged_join, [PNode]),
     lager:info("[join] ~p to (~p): ~p", [Node, PNode, R]),
     ?assertEqual(ok, R),
     ok.
 
 plan_and_commit(Node) ->
-    timer:sleep(500),
+    timer:sleep(5000),
     lager:info("planning and commiting cluster join"),
     case rpc:call(Node, riak_core_claimant, plan, []) of
         {error, ring_not_ready} ->
             lager:info("plan: ring not ready"),
-            timer:sleep(100),
+            timer:sleep(5000),
             maybe_wait_for_changes(Node),
             plan_and_commit(Node);
         {ok, _, _} ->
